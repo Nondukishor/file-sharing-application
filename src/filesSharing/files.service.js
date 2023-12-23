@@ -35,7 +35,7 @@ next()
 }
 
 
-
+const cleanupInterval = 5 * 1000;
 exports.cleanupFiles = () => {
   const uploadDir = path.join(__dirname, '../../', FOLDER)
 
@@ -60,7 +60,7 @@ exports.cleanupFiles = () => {
         const elapsedTime = currentTime - lastModifiedTime
 
         // If the file has been inactive for more than cleanupInterval, delete it
-        if (elapsedTime > CLEARN_UP_INTERVAL) {
+        if (elapsedTime > cleanupInterval) {
           fs.unlinkSync(filePath, (err) => {
             if (err) {
               console.error('Error deleting file:', err)

@@ -4,7 +4,7 @@ const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const { router } = require('./routes')
 const logger = require('./utils/logger')
-const { PORT} = require('./config/env')
+const { PORT,CLEANUP_INTERVAL} = require('./config/env')
 const { ValidationError } = require('express-validation')
 const schedule = require('node-schedule')
 
@@ -32,7 +32,7 @@ const swaggerOptions = {
   apis: ['./src/routes.js'], // Path to your API routes
 }
 
-const job = schedule.scheduleJob('0 0 * * *', cleanupFiles);
+const job = schedule.scheduleJob(CLEANUP_INTERVAL, cleanupFiles);
 const swaggerSpec = swaggerJsdoc(swaggerOptions)
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use(function (err, req, res, next) {
