@@ -1,0 +1,14 @@
+# Ignore all files in the "node_modules" directory
+node_modules/
+
+# Ignore all files with the ".json" extension
+*.json
+
+# Ignore all files with the ".md" extension
+*.md
+
+# Ignore a specific directory and its contents
+ignore-this-directory/
+
+# Ignore a specific file
+ignore-this-file.js

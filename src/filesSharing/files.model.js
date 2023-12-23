@@ -1,5 +1,5 @@
 // models/File.js
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const fileSchema = new mongoose.Schema({
   filename: {
@@ -14,8 +14,8 @@ const fileSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+})
 
-const File = mongoose.model('File', fileSchema);
+const File = mongoose.model('File', fileSchema)
 
 exports.File = File

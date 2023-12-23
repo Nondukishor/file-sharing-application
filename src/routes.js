@@ -1,9 +1,16 @@
+const {
+  uploadFile,
+  downloadFile,
+  deleteFile,
+} = require('./filesSharing/files.controller')
+const { generateKeys } = require('./filesSharing/files.service')
+const {
+  fileValidationSchema,
+} = require('./filesSharing/validation/file.validation')
+const {downloadLimiter, uploadLimiter} = require("./filesSharing/middlware/limit.middleware")
 
-const {uploadFile, downloadFile, deleteFile} = require('./filesSharing/files.controller')
-const {generateKeys} = require('./filesSharing/files.service')
-const {fileValidationSchema} = require("./filesSharing/validation/file.validation")
 const Router = require('express').Router
-const router = Router();
+const router = Router()
 // Routes
 /**
  * @swagger
@@ -15,7 +22,7 @@ const router = Router();
  *       200:
  *         description: OK
  */
-router.get("/", (req, res) => res.sendStatus(200));
+router.get('/', (req, res) => res.sendStatus(200))
 /**
  * @swagger
  * /files:
@@ -40,7 +47,7 @@ router.get("/", (req, res) => res.sendStatus(200));
  *       500:
  *         description: Internal server error
  */
-router.post('/files',fileValidationSchema, generateKeys , uploadFile);
+router.post('/files',uploadLimiter, fileValidationSchema, generateKeys, uploadFile)
 /**
  * @swagger
  * /files/{publicKey}:
@@ -61,8 +68,7 @@ router.post('/files',fileValidationSchema, generateKeys , uploadFile);
  *       500:
  *         description: Internal server error
  */
-router.get('/files/:publicKey', downloadFile);
-
+router.get('/files/:publicKey', downloadLimiter, downloadFile)
 
 /**
  * @swagger
@@ -84,6 +90,6 @@ router.get('/files/:publicKey', downloadFile);
  *       500:
  *         description: Internal server error
  */
-router.delete('/files/:privateKey', deleteFile);
+router.delete('/files/:privateKey', deleteFile)
 
 exports.router = router
