@@ -1,5 +1,5 @@
 const request = require('supertest');
-
+const mongoose = require("mongoose")
 const {server, job} = require('../../src/server');
 
 
@@ -13,6 +13,7 @@ describe('Health Check API', () => {
     if (job) {
       job.cancel();
     }
+    await mongoose.disconnect()
     await server.close();
   });
 });

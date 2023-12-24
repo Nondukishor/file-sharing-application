@@ -2,7 +2,7 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const crypto = require('crypto')
-const { FOLDER,CLEARN_UP_INTERVAL } = require('../config/env')
+const { FOLDER } = require('../config/env')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

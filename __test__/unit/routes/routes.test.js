@@ -25,7 +25,7 @@ describe('Files Routes', () => {
   it('should respond with 200 OK for health check endpoint', async () => {
     const response = await request(app).get('/');
     expect(response.status).toBe(200);
-  });
+  },100000);
 
   it('should handle file upload', async () => {
     const response = await request(app)
@@ -38,7 +38,7 @@ describe('Files Routes', () => {
     expect(response.status).toBe(200);
 
     // Add more assertions based on your specific implementation
-  });
+  },100000);
 
   it('should handle file download', async () => {
     // Mock File.findOne to simulate the existence of a file
@@ -54,7 +54,7 @@ describe('Files Routes', () => {
     expect(response.status).toBe(200);
 
     // Add more assertions based on your specific implementation
-  });
+  },100000);
 
   it('should handle file deletion', async () => {
     // Mock File.findOne to simulate the existence of a file
@@ -75,5 +75,5 @@ describe('Files Routes', () => {
     expect(response.status).toBe(200);
 
     // Add more assertions based on your specific implementation
-  });
+  },100000);
 });

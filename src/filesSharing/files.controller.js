@@ -54,11 +54,8 @@ exports.downloadFile = async (req, res) => {
     const location = path.join(__dirname, '../../', FOLDER, file.filename)
     const fileStream = fs.createReadStream(location)
     res.status(200)
-    res.setHeader(
-      'Content-disposition',
-      'attachment; filename=' + file.filename,
-    )
-    res.setHeader('Content-type', file.filename.split('.'))
+    res.setHeader('Content-disposition','attachment; filename=' + file.filename)
+    res.setHeader('Content-type', file.filename.split('.')[0])
     fileStream.pipe(res)
 
   } catch (error) {

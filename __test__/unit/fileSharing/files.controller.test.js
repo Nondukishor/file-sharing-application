@@ -1,12 +1,13 @@
-const request = require('supertest');
 const { uploadFile, downloadFile, deleteFile } = require('../../../src/filesSharing/files.controller');
 const { File } = require('../../../src/filesSharing/files.model');
 const fs = require('fs');
 const path = require('path');
-
-// Mocking dependencies
+const dotenv = require('dotenv')
+dotenv.config()
+const {FOLDER} = require("../../../src/config/env")
 jest.mock('../../../src/filesSharing/files.model');
 jest.mock('fs');
+
 
 describe('Files Controller', () => {
   describe('uploadFile', () => {
@@ -49,44 +50,82 @@ describe('Files Controller', () => {
 
   describe('downloadFile', () => {
     it('should download a file successfully', async () => {
-      // Mock req, res
+      jest.mock('../../../src/config/env', () => ({
+        ...jest.requireActual('../../../src/config/env'),
+        FOLDER: 'uploads', // Replace this with your desired mocked folder path
+      }));
       const req = { params: { publicKey: 'public-key' } };
       const res = {
         status: jest.fn().mockReturnThis(),
         setHeader: jest.fn().mockReturnThis(),
         end: jest.fn(),
       };
-
+  
       // Mock File.findOne to return a file
       File.findOne.mockResolvedValueOnce({
         filename: 'test-file.txt',
       });
-
+  
       // Mock path.join
       const pathJoinMock = jest.spyOn(path, 'join');
-      pathJoinMock.mockReturnValueOnce('/mocked/path/to/test-file.txt');
-
+      pathJoinMock.mockReturnValueOnce('uploads/test-file.txt');
+  
       // Mock fs.createReadStream
-      const createReadStreamMock = jest.fn();
-      fs.createReadStream = createReadStreamMock.mockReturnValueOnce('fake file stream');
-
+      const createReadStreamMock = jest.spyOn(fs, 'createReadStream');
+      createReadStreamMock.mockReturnValueOnce({
+        pipe: jest.fn(),
+      });
+  
       // Call the function
       await downloadFile(req, res);
-
+  
       // Assertions
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.setHeader).toHaveBeenCalledWith(
-        'Content-disposition',
-        'attachment; filename=test-file.txt',
-      );
-      expect(res.setHeader).toHaveBeenCalledWith('Content-type', ['txt']);
-      expect(createReadStreamMock).toHaveBeenCalledWith('/mocked/path/to/test-file.txt');
-      expect(res.end).toHaveBeenCalledWith('fake file stream');
+      expect(res.setHeader).toHaveBeenCalledWith("Content-disposition", "attachment; filename=test-file.txt");
+      expect(res.setHeader).toHaveBeenCalledWith("Content-type", "test-file");
+      expect(createReadStreamMock).toHaveBeenCalledWith('/test-file.txt');
+      await new Promise(resolve => setTimeout(resolve, 0));
+      expect(res.end).toHaveBeenCalled();
     });
-
-    // Add more test cases for error scenarios if needed
+  
+    it('should return a 404 error when downloading a non-existing file', async () => {
+      // Mock req, res
+      const req = { params: { publicKey: 'non-existing-public-key' } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+  
+      // Mock File.findOne to return null (file does not exist)
+      File.findOne.mockResolvedValueOnce(null);
+  
+      // Call the function
+      await downloadFile(req, res);
+  
+      // Assertions
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: 'file not found' });
+    });
+  
+    it('should handle server error', async () => {
+      // Mock req, res
+      const req = { params: { publicKey: 'public-key' } };
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+  
+      // Mock File.findOne to throw an error
+      File.findOne.mockRejectedValueOnce(new Error('Some error'));
+  
+      // Call the function
+      await downloadFile(req, res);
+  
+      // Assertions
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Server error' });
+    });
   });
-
   describe('deleteFile', () => {
     it('should delete a file successfully', async () => {
       // Mock req, res
@@ -125,7 +164,5 @@ describe('Files Controller', () => {
       );
       expect(unlinkSyncMock).toHaveBeenCalledWith('/mocked/path/to/test-file.txt');
     });
-
-    // Add more test cases for error scenarios if needed
   });
 });

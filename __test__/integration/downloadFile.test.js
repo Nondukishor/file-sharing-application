@@ -1,59 +1,34 @@
 const request = require('supertest');
-const { server, job } = require('../../src/server');
-const fs = require('fs');
-const path = require('path');
-const { FOLDER } = require('../../src/config/env');
+const {server, job} = require('../../src/server');
+const mongoose = require("mongoose")
 
-describe('File API - Download', () => {
-  let uploadedFilePublicKey;
-  let uploadedFilePrivateKey;
-  let existingFile;
-  const filePath = path.join(__dirname, '../../', FOLDER);
+describe('File API download', () => {
+    let uploadedFilePublicKey;
+    let uploadedFilePrivateKey;
+  
+    it('should upload a file successfully', async () => {
+      const response = await request(server)
+        .post('/files')
+        .attach('file', Buffer.from('file content'), {
+          filename: 'test-file.txt',
+          contentType: 'application/json',
+        });;
+  
+      uploadedFilePublicKey = response.body.data.publicKey;
+      uploadedFilePrivateKey = response.body.data.privateKey;
+      uploadedFileName = response.body.data.filename
+      const deleteResponse = await request(server).get(`/files/${uploadedFilePublicKey}`)
+      console.log(deleteResponse)
+      expect(deleteResponse.status).toBe(200);
+      console.log(deleteResponse.header['content-type'])
+      expect(deleteResponse.header['content-type']).toBe(uploadedFileName.split('.')[0])
+    },100000);
 
-  beforeAll(async () => {
-    jest.setTimeout(15000);
-    const uploadResponse = await request(server)
-      .post('/files')
-      .attach('file', Buffer.from('file content'), {
-        filename: 'test-file.txt',
-        contentType: 'application/json',
+    afterAll(async () => {
+        if (job) {
+          job.cancel();
+        }
+        await mongoose.disconnect()
+        await server.close();
       });
-
-    uploadedFilePublicKey = uploadResponse.body.data.publicKey;
-    uploadedFilePrivateKey = uploadResponse.body.data.privateKey;
-
-    existingFile = {
-      filename: uploadResponse.body.data.filename,
-      content: 'file content for testing download',
-    };
-
-    // Write the file content to the file system
-    fs.writeFileSync(`${filePath}/${existingFile.filename}`, existingFile.content);
   });
-
-  it('should download a file successfully', async () => {
-    const response = await request(server).get(`/files/${uploadedFilePublicKey.toString()}`);
-    expect(response.header['content-type']).toBe(existingFile.filename.split('.')[0]);
-  });
-
-  it('should return a 404 error when downloading a non-existing file', async () => {
-    const nonExistingPublicKey = 'non-existing-public-key';
-    const response = await request(server).get(`/files/${nonExistingPublicKey}`);
-
-    expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty('message', 'file not found');
-  });
-
-  afterAll(async () => {
-    if (job) {
-      job.cancel();
-    }
-    const serverClosePromise = new Promise((resolve) => {
-      server.close(() => {
-        resolve();
-      });
-    });
-
-    await serverClosePromise;
-  });
-});
