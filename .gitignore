@@ -98,4 +98,14 @@ web_modules/
 
 # upload files
 
-uploads/*.txt
+# Ignore all picture files
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.webp
+*.txt
+*.pdf
+!api-doc.png

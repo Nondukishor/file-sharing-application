@@ -3,6 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const crypto = require('crypto')
 const { FOLDER } = require('../config/env')
+const { File } = require('./files.model')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -15,8 +16,6 @@ const storage = multer.diskStorage({
     if (file.originalname) {
       file_name = file.originalname.split('.')[0]
     }
-
-    // Define the filename for uploaded files
     cb(null, `${Date.now()}-${file_name}${path.extname(file.originalname)}`)
   },
 })
@@ -32,6 +31,41 @@ exports.generateKeys = (req, res, next) => {
     publicKey: diffHell.getPublicKey('hex'),
   }
   next()
+}
+
+exports.isValidPublicKey = (publicKey) => {
+  if (typeof publicKey === 'string' && /^[0-9a-fA-F]+$/.test(publicKey)) {
+    if (publicKey.length === 512) {
+      return true
+    }
+  }
+  return false
+}
+
+exports.validateRequest = (req) => {
+  if (!req.file) {
+    throw new Error('No file uploaded')
+  }
+}
+
+exports.checkFileExistence = async (filename) => {
+  const isExist = await File.findOne({ filename })
+  if (isExist) {
+    throw new Error('File already exists')
+  }
+}
+
+exports.createNewFile = (filename, privateKey, publicKey) => {
+  const file = new File({
+    filename,
+    privateKey,
+    publicKey,
+  })
+  return file
+}
+
+exports.saveFile = async (file) => {
+  await file.save()
 }
 
 const cleanupInterval = 5 * 1000
@@ -58,7 +92,6 @@ exports.cleanupFiles = () => {
         const lastModifiedTime = new Date(stats.mtime).getTime()
         const elapsedTime = currentTime - lastModifiedTime
 
-        // If the file has been inactive for more than cleanupInterval, delete it
         if (elapsedTime > cleanupInterval) {
           fs.unlinkSync(filePath, (err) => {
             if (err) {

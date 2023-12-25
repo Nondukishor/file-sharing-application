@@ -10,7 +10,7 @@ const {
   uploadLimiter,
 } = require('./middlware/limit.middleware')
 
-const Router = require('express').Router
+const { Router } = require('express')
 const router = Router()
 // Routes
 /**
@@ -99,4 +99,4 @@ router.get('/files/:publicKey', downloadLimiter, downloadFile)
  */
 router.delete('/files/:privateKey', deleteFile)
 
-exports.router = router
+module.exports = router

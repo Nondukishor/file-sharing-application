@@ -31,27 +31,53 @@ cd file-sharing-application
 npm install
 ```
 
-Set up environment variables:
+### Set up environment variables:
 
-Create a .env file in the root directory with the following content:
+Create a .env file in the root directory with the following content you can aslo copy .env.example file
 
 ```
 PORT=3000
-MONGODB_URI=your_mongodb_connection_string
+FOLDER="uploads"
+
+DAILY_DOWNLOAD_LIMIT=1000
+DAILY_UPLOAD_LIMIT=1000
+
+# *    *    *    *    *    *
+# ┬    ┬    ┬    ┬    ┬    ┬
+# │    │    │    │    │    │
+# │    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
+# │    │    │    │    └───── month (1 - 12)
+# │    │    │    └────────── day of month (1 - 31)
+# │    │    └─────────────── hour (0 - 23)
+# │    └──────────────────── minute (0 - 59)
+# └───────────────────────── second (0 - 59, OPTIONAL)
+CLEANUP_INTERVAL='0 0 * * *'
+KEY_ALGORITHM=rsa
+DATABASE_URL=mongodb+srv://pronipu:RpTy6DnRt0ysP00e@cluster1.pxc7w40.mongodb.net/filesharing_db?retryWrites=true&w=majority
 ```
 
 Replace your_mongodb_connection_string with the actual connection string for your MongoDB database.
 
-Run the application:
+### Run the application:
 
 ```
 npm start
-The application will be running at http://localhost:3000.
+{"level":"info","message":"Server is running on http://localhost:3000"}
+{"level":"info","message":"Api docs avilable at http://localhost:3000/docs"}
+Database Connected
+```
+
+### To run test and see test coverage
+
+```
+npm run test
+npm run coverage
 ```
 
 Explore API Documentation:
 
 Visit **http://localhost:3000/api-docs** to explore the Swagger documentation for the API.
+![alt text](/api-doc.png)
 
 ## API Endpoints
 

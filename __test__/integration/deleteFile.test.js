@@ -28,7 +28,7 @@ describe('File API - Delete', () => {
       `/files/${nonExistingPrivateKey}`,
     )
     expect(response.status).toBe(404)
-    expect(response.body).toEqual({ message: 'file not found' })
+    expect(response.body).toEqual({ message: 'File not found' })
   }, 100000)
 
   afterAll(async () => {

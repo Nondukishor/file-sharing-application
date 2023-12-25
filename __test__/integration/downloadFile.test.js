@@ -22,9 +22,7 @@ describe('File API download', () => {
     )
     expect(deleteResponse.status).toBe(200)
     console.log(deleteResponse.header['content-type'])
-    expect(deleteResponse.header['content-type']).toBe(
-      uploadedFileName.split('.')[0],
-    )
+    expect(deleteResponse.header['content-type']).toBe('text/plain')
   }, 100000)
 
   afterAll(async () => {

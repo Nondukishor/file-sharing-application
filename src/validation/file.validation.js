@@ -3,7 +3,6 @@ const { body, validationResult } = require('express-validator')
 const fileValidationSchema = [
   upload.single('file'),
   body('file').custom((value, { req }) => {
-    if (typeof value !== 'string') console.log(typeof value)
     if (!req.file) {
       throw new Error('No file uploaded.')
     }

@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/server.js",
-    "test": "jest --detectOpenHandles --watchAll",
-    "format": "npx prettier . --write"
+    "test": "jest --runInBand --detectOpenHandles --watchAll --config ./jest.config.js",
+    "format": "npx prettier . --write",
+    "coverage": "npx jest --coverage"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,9 @@
     "express-validation": "^4.1.0",
     "express-validator": "^7.0.1",
     "joi": "^17.11.0",
+    "meme": "^0.1.2",
+    "mime": "^4.0.1",
+    "mime-types": "^2.1.35",
     "mongoose": "^8.0.3",
     "multer": "^1.4.5-lts.1",
     "node-schedule": "^2.1.1",

@@ -1,7 +1,7 @@
 const express = require('express')
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
-const { router } = require('./routes')
+const router = require('./routes')
 const logger = require('./utils/logger')
 const { PORT, CLEANUP_INTERVAL } = require('./config/env')
 const { ValidationError } = require('express-validation')
@@ -44,6 +44,7 @@ app.use(router)
 const server = app.listen(PORT, () => {
   connectDb()
   logger.info(`Server is running on http://localhost:${PORT}`)
+  logger.info(`Api docs avilable at http://localhost:${PORT}/docs`)
 })
 
 module.exports = {
