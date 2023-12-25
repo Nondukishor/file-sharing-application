@@ -1,12 +1,12 @@
 const request = require('supertest')
 const express = require('express')
 const router = require('../../../src/routes')
-const filesController = require('../../../src/filesSharing/files.controller') // Import the actual module for mocking
+const filesController = require('../../../src/filesSharing/files.controller')
 const app = express()
 app.use(express.json())
 app.use('/', router)
 
-jest.mock('../../../src/filesSharing/files.controller') // Mock the entire module
+jest.mock('../../../src/filesSharing/files.controller')
 
 describe('File Routes', () => {
   test('GET / should return 200 OK', async () => {

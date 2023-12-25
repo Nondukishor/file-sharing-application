@@ -84,7 +84,7 @@ describe('File Upload', () => {
 
   test('should call the save method of the provided file object', async () => {
     const fileMock = {
-      save: jest.fn().mockResolvedValueOnce(), // Mocking the save method
+      save: jest.fn().mockResolvedValueOnce(),
     }
     await saveFile(fileMock)
     expect(fileMock.save).toHaveBeenCalled()

@@ -3,8 +3,7 @@ const {
   PORT,
   DATABASE_URL,
   CLEANUP_INTERVAL,
-} = require('../../../src/config/env') // Replace with the correct path to your config module
-
+} = require('../../../src/config/env')
 describe('Config Module', () => {
   it('should have the correct values for environment variables', () => {
     expect(FOLDER).toBeDefined()
