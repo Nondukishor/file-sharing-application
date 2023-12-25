@@ -1,15 +1,14 @@
-// src/server.js
 const express = require('express')
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const { router } = require('./routes')
 const logger = require('./utils/logger')
-const { PORT,CLEANUP_INTERVAL} = require('./config/env')
+const { PORT, CLEANUP_INTERVAL } = require('./config/env')
 const { ValidationError } = require('express-validation')
 const schedule = require('node-schedule')
 
 const { cleanupFiles } = require('./filesSharing/files.service')
-const {connectDb }=require('./db')
+const { connectDb } = require('./db')
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -29,10 +28,10 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./src/routes.js'], // Path to your API routes
+  apis: ['./src/routes.js'],
 }
 
-const job = schedule.scheduleJob(CLEANUP_INTERVAL, cleanupFiles);
+const job = schedule.scheduleJob(CLEANUP_INTERVAL, cleanupFiles)
 const swaggerSpec = swaggerJsdoc(swaggerOptions)
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use(function (err, req, res, next) {
@@ -49,5 +48,5 @@ const server = app.listen(PORT, () => {
 
 module.exports = {
   server,
-  job
+  job,
 }

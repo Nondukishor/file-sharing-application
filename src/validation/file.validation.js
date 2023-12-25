@@ -1,5 +1,4 @@
-const { Joi } = require('express-validation')
-const { upload } = require('../files.service')
+const { upload } = require('../filesSharing/files.service')
 const { body, validationResult } = require('express-validator')
 const fileValidationSchema = [
   upload.single('file'),

@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
     if (file.originalname) {
       file_name = file.originalname.split('.')[0]
     }
-    
+
     // Define the filename for uploaded files
     cb(null, `${Date.now()}-${file_name}${path.extname(file.originalname)}`)
   },
@@ -24,18 +24,17 @@ const storage = multer.diskStorage({
 exports.upload = multer({ storage: storage })
 
 exports.generateKeys = (req, res, next) => {
-const prime_length = 2048;
-const diffHell = crypto.createDiffieHellman(prime_length);
-diffHell.generateKeys();
+  const prime_length = 2048
+  const diffHell = crypto.createDiffieHellman(prime_length)
+  diffHell.generateKeys()
   req.keys = {
     privateKey: diffHell.getPrivateKey('hex'),
     publicKey: diffHell.getPublicKey('hex'),
   }
-next()
+  next()
 }
 
-
-const cleanupInterval = 5 * 1000;
+const cleanupInterval = 5 * 1000
 exports.cleanupFiles = () => {
   const uploadDir = path.join(__dirname, '../../', FOLDER)
 

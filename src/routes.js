@@ -4,10 +4,11 @@ const {
   deleteFile,
 } = require('./filesSharing/files.controller')
 const { generateKeys } = require('./filesSharing/files.service')
+const { fileValidationSchema } = require('./validation/file.validation')
 const {
-  fileValidationSchema,
-} = require('./filesSharing/validation/file.validation')
-const {downloadLimiter, uploadLimiter} = require("./filesSharing/middlware/limit.middleware")
+  downloadLimiter,
+  uploadLimiter,
+} = require('./middlware/limit.middleware')
 
 const Router = require('express').Router
 const router = Router()
@@ -47,7 +48,13 @@ router.get('/', (req, res) => res.sendStatus(200))
  *       500:
  *         description: Internal server error
  */
-router.post('/files',uploadLimiter, fileValidationSchema, generateKeys, uploadFile)
+router.post(
+  '/files',
+  uploadLimiter,
+  fileValidationSchema,
+  generateKeys,
+  uploadFile,
+)
 /**
  * @swagger
  * /files/{publicKey}:
